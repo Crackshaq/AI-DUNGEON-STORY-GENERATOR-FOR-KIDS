@@ -1,15 +1,13 @@
-
 import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 def load_model(model_name="EleutherAI/gpt-neo-125M"):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name)
-
-    # Ensure model runs on CPU if no GPU is available
-    model = model.to(torch.device("cpu"))
+    model = model.to(torch.device("cpu"))  # Force CPU for Streamlit Cloud
     return tokenizer, model
 
-def generate_story(prompt, tokenizer, model, max_length=200, num_return_sequences=3):
+def generate_story(prompt, tokenizer, model, max_length=200, num_return_sequences=1):
     inputs = tokenizer(prompt, return_tensors="pt")
     outputs = model.generate(
         **inputs,
